@@ -26,8 +26,16 @@ export interface fetchedUserData {
 }
 
 interface filteredUserData {
-  picture: string;
+  avatar: string;
   username: string;
 }
 
 export type usersDataArr = filteredUserData[];
+
+export interface PostData {
+  username: string;
+  avatar: string;
+  imageURL: string;
+  desc: string;
+  likes: number;
+}

@@ -9,8 +9,9 @@ import {
   USER_DATA_API_URL,
   DEFAULT_QUOTES_AMOUNT_TO_FETCH,
   DEFAULT_USERS_AMOUNT_TO_FETCH,
+  DEFAULT_POSTS_AMOUNT_TO_GENERATE
 } from './config';
-import { fetchedImageResponse, fetchedPostDescData, fetchedUserData,  usersDataArr } from '../types/types';
+import { fetchedImageResponse, fetchedPostDescData, fetchedUserData,  usersDataArr, PostData } from '../types/types';
 
 const collections: { posts?: mongoDB.Collection } = {};
 
@@ -34,10 +35,17 @@ const scrapeProfileAndPosts = async () => {
       const userData = await fetchUsers()
       const descriptionsData = await fetchDescriptions();
       const imagesData = await fetchImages();
+      generatePostsAndProfiles(userData, descriptionsData, imagesData);
   } catch (e) {
     console.error(e);
   }
-  console.log((descriptions));
+};
+
+const convertImage = async (url: string) => {
+  const { data }: {data: ArrayBuffer} = await axios.get(url, { responseType: 'arraybuffer'});
+  const bufferToBase64 = Buffer.from(data).toString('base64');
+  const imageURL = `data:image/jpeg;base64,${bufferToBase64}`;
+  return imageURL;
 };
 
 const fetchUsers = async () => {
@@ -46,7 +54,7 @@ const fetchUsers = async () => {
     const { data }: { data: fetchedUserData } = await axios.get(USER_DATA_API_URL);
     const desiredUserData = {
       username: data.results[0].login.username,
-      picture: data.results[0].picture.large,
+      avatar: await convertImage(data.results[0].picture.large),
     };
     usersData.push(desiredUserData)
   }
@@ -70,13 +78,26 @@ const fetchImages = async () => {
   const largePhotosURLs = data.photos.map((photo) => photo.src.large);
   console.log(largePhotosURLs);
   for (const url of largePhotosURLs) {
-    console.log(url)
-    const { data }: {data: ArrayBuffer} = await axios.get(url, {responseType: 'arraybuffer'});
-    const base64img = Buffer.from(data).toString('base64');
-    const imageURL = `data:image/jpeg;base64,${base64img}`;
+    const imageURL = await convertImage(url); 
     imageURLs.push(imageURL)
   }
   return imageURLs;
+};
+
+const generatePostsAndProfiles = (users: usersDataArr, descriptions: string[], images: string[]) => {
+  const posts: PostData[] = [];
+  for (let i = 0; i < DEFAULT_POSTS_AMOUNT_TO_GENERATE; i++) {
+    const { username, avatar } = users[Math.floor(Math.random() * users.length)];
+    const generatedPost = {
+      username,
+      avatar,
+      desc: descriptions[i],
+      imageURL: images[i],
+      likes: Math.floor(Math.random() * 500),
+    }
+    posts.push(generatedPost);
+  }
+  console.log(posts[0]);
 }
 
 scrapeProfileAndPosts();

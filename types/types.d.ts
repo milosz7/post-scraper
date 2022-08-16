@@ -39,3 +39,8 @@ export interface PostData {
   desc: string;
   likes: number;
 }
+
+export interface profileData extends filteredUserData {
+  followers: number,
+  following: number,
+}

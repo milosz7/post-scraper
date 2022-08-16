@@ -86,10 +86,12 @@ const generatePostsAndProfiles = (users: usersDataArr, descriptions: string[], i
     const profileData = {
       username,
       avatar,
+      followers: Math.floor(Math.random() * 150),
+      following: Math.floor(Math.random() * 150),
     }
     profiles.push(profileData)
   }
   console.log(posts[0]);
-}
+};
 
 scrapeProfileAndPosts();

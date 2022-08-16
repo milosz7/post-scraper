@@ -1,7 +1,7 @@
 import * as mongoDB from 'mongodb';
 import dotenv from 'dotenv';
 
-const collections: { posts?: mongoDB.Collection, profiles?: mongoDB.Collection } = {};
+export const collections: { posts?: mongoDB.Collection, profiles?: mongoDB.Collection } = {};
 
 export const connectToDb = async () => {
   dotenv.config();
@@ -12,14 +12,14 @@ export const connectToDb = async () => {
 
   await db.command({
     "collMod": process.env.POSTS_COLLECTION_NAME,
-    "validator": {
+    validator: {
       $jsonSchema: {
         bsonType: "object",
         required: ["username", "avatar", "imageURL", "desc", "likes"],
         additionalProperties: false,
         properties: {
           _id: {},
-          name: {
+          username: {
             bsonType: "string",
             description: "'name' is required, type: string",
           },
@@ -27,7 +27,7 @@ export const connectToDb = async () => {
             bsonType: "string",
             description: "'avatar' is required, type: string",
           },
-          imaegURL: {
+          imageURL: {
             bsonType: "string",
             description: "'imaegURL' is required, type: string",
           },
@@ -38,7 +38,7 @@ export const connectToDb = async () => {
           likes: {
             bsonType: "number",
             description: "'likes' is required, type: number",
-          },
+          }
         }
       }
     }
@@ -46,10 +46,10 @@ export const connectToDb = async () => {
 
   await db.command({
     "collMod": process.env.PROFILES_COLLECTION_NAME,
-    "validator": {
+    validator: {
       $jsonSchema: {
         bsonType: "object",
-        required: ["avatar", "username"],
+        required: ["avatar", "username", "followers", "following"],
         additionalProperties: false,
         properties: {
           _id: {},
@@ -68,7 +68,7 @@ export const connectToDb = async () => {
           following: {
             bsonType: "number",
             description: "'following' is required, type: number'",
-          },
+          }
         }
       }
     }
@@ -82,5 +82,3 @@ export const connectToDb = async () => {
 
   console.log(`Connected to ${db.databaseName}, collections: ${postsCollection.collectionName}, ${profilesCollection.collectionName}`);
 };
-
-connectToDb();

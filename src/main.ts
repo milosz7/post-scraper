@@ -10,17 +10,19 @@ import {
   DEFAULT_POSTS_AMOUNT_TO_GENERATE
 } from './config';
 import { fetchedImageResponse, fetchedPostDescData, fetchedUserData,  usersDataArr, PostData, profileData} from '../types/types';
+import { connectToDb, collections } from './db-config';
 
 const scrapeProfileAndPosts = async () => {
   dotenv.config();
   const descriptions: string[] = [];
   try {
+      await connectToDb();
       const userData = await fetchUsers()
       const descriptionsData = await fetchDescriptions();
       const imagesData = await fetchImages();
       generatePostsAndProfiles(userData, descriptionsData, imagesData);
-  } catch (e) {
-    console.error(e);
+  } catch (e: any) {
+    throw new Error(e.message);
   }
 };
 
@@ -59,7 +61,6 @@ const fetchImages = async () => {
     headers: { Authorization: process.env.PEXELS_API_KEY },
   });
   const largePhotosURLs = data.photos.map((photo) => photo.src.large);
-  console.log(largePhotosURLs);
   for (const url of largePhotosURLs) {
     const imageURL = await convertImage(url); 
     imageURLs.push(imageURL)
@@ -91,7 +92,14 @@ const generatePostsAndProfiles = (users: usersDataArr, descriptions: string[], i
     }
     profiles.push(profileData)
   }
-  console.log(posts[0]);
+  sendPostsToDb(posts)
 };
+
+const sendPostsToDb = async (posts: PostData[]) => {
+  if (collections.posts) {
+    const result = await collections.posts!.insertMany(posts);
+    console.log(`Added ${posts.length} new posts!`);
+  }
+}
 
 scrapeProfileAndPosts();

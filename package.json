@@ -2,10 +2,10 @@
   "name": "scraper-clone-insta",
   "version": "1.0.0",
   "description": "Tool made for scraping data into my instagram clone project",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node --project tsconfig.json src/index.ts",
+    "dev": "ts-node --project tsconfig.json src/main.ts",
     "build": "tsc"
   },
   "author": "milosz7",

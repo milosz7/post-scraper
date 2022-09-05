@@ -15,8 +15,10 @@ export interface fetchedPostDescData {
 export interface fetchedUserData {
   results: [
     {
+      email: string;
       login: {
         username: string;
+        password: string;
       };
       picture: {
         large: string;
@@ -25,17 +27,19 @@ export interface fetchedUserData {
   ];
 }
 
-interface filteredUserData {
-  avatar: string;
+export interface filteredUserData {
+  avatar: ArrayBuffer;
   username: string;
+  email: string;
+  password: string;
 }
 
 export type usersDataArr = filteredUserData[];
 
 export interface PostData {
   username: string;
-  avatar: string;
-  imageURL: string;
+  avatar: ArrayBuffer;
+  imageURL: ArrayBuffer;
   desc: string;
   likes: number;
 }

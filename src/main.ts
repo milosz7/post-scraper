@@ -63,7 +63,7 @@ const createPostAndUser = async () => {
     const largePhotosURLs = data.photos.map((photo) => photo.src.large);
 
     for (let i = 0; i < DEFAULT_POSTS_AMOUNT_TO_GENERATE; i++) {
-      const photo = Buffer.from(largePhotosURLs[i]);
+      const photo = await convertImage(largePhotosURLs[i]);
       const desc = await fetchDesc();
 
       const newPost = new Post({

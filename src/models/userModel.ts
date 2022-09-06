@@ -1,6 +1,5 @@
 import { model, Schema, InferSchemaType } from 'mongoose';
 import { validateEmail, validateUsername } from '../utils/helpers';
-import mongoose from 'mongoose';
 
 const userSchema = new Schema({
   email: { type: String, required: true, validate: validateEmail, unique: true },
@@ -8,7 +7,7 @@ const userSchema = new Schema({
     type: String,
     required: true,
     minLength: 3,
-    maxLength: 15,
+    maxLength: 16,
     validate: validateUsername,
     unique: true,
   },

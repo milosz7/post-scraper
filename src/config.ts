@@ -4,3 +4,4 @@ export const POST_DESCRIPTION_URL = 'https://api.quotable.io/random?maxLength=10
 export const DEFAULT_POSTS_AMOUNT_TO_GENERATE = 3;
 export const DEFAULT_QUOTES_AMOUNT_TO_FETCH = 15;
 export const DEFAULT_USERS_AMOUNT_TO_FETCH = 5;
+export const RESULTS_PER_PAGE = 10;

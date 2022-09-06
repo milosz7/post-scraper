@@ -6,6 +6,7 @@ import {
   POST_DESCRIPTION_URL,
   USER_DATA_API_URL,
   DEFAULT_POSTS_AMOUNT_TO_GENERATE,
+  RESULTS_PER_PAGE,
 } from './config';
 import {
   fetchedImageResponse,
@@ -17,6 +18,8 @@ import { connectToDb } from './db-config';
 import User from './models/userModel';
 import Post from './models/postModel';
 import mongoose from 'mongoose';
+import { randomizeUrl } from './utils/helpers';
+import { match } from 'assert';
 dotenv.config();
 
 const convertImage = async (url: string) => {
@@ -57,13 +60,14 @@ const createPostAndUser = async () => {
       profileDesc: 'Some desc',
     });
 
-    const { data }: { data: fetchedImageResponse } = await axios.get(PEXELS_RANDOM_IMG_API_URL, {
+    const { data }: { data: fetchedImageResponse } = await axios.get(randomizeUrl(), {
       headers: { Authorization: process.env.PEXELS_API_KEY },
     });
     const largePhotosURLs = data.photos.map((photo) => photo.src.large);
 
     for (let i = 0; i < DEFAULT_POSTS_AMOUNT_TO_GENERATE; i++) {
-      const photo = await convertImage(largePhotosURLs[i]);
+      const randomPhoto = Math.floor(Math.random() * RESULTS_PER_PAGE)
+      const photo = await convertImage(largePhotosURLs[randomPhoto]);
       const desc = await fetchDesc();
 
       const newPost = new Post({
